@@ -22,7 +22,7 @@ class MyPlugin(Star):
         flag=0
         out_message_chain=[
             Comp.At(qq=event.get_sender_id()),
-            Comp.Plain(f"你好，{event.get_sender_name()},你发送了：")
+            Comp.Plain(f" 你好，{event.get_sender_name()},你发送了：")
         ]
         for comp in message_chain:
             if comp.type==ComponentType.At:
@@ -33,9 +33,24 @@ class MyPlugin(Star):
         if flag==0:
             return
         logger.info(message_chain)
-        out_message_chain.extend(message_chain)
         if event.is_at_or_wake_command:
             yield event.chain_result(out_message_chain) # 发送一条纯文本消息
-
+    @filter.command("ai")
+    async def call_llm(self, event:AstrMessageEvent,text:str):
+        if len(text)>30:
+            return
+        provider=self.context.get_using_provider()
+        try:
+            llm_response = await provider.text_chat(
+                prompt="",
+                contexts=[
+                    {"role": "system", "content": "你是一个群聊机器人。接下来会直接向你展示一些消息，你需要对它做出简短的回复，不超过30个字。"},
+                    {"role": "user", "content": text}
+                ]
+            )
+            out_text = llm_response.completion_text
+            yield event.plain_result(out_text)
+        except Exception as e:
+            logger.error(f"LLM调用失败: {e}")
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
