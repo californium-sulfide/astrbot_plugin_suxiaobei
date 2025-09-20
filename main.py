@@ -35,8 +35,10 @@ class MyPlugin(Star):
         logger.info(message_chain)
         if event.is_at_or_wake_command:
             yield event.chain_result(out_message_chain) # 发送一条纯文本消息
+    
     @filter.command("ai")
     async def call_llm(self, event:AstrMessageEvent,text:str):
+        '''ai回复功能'''
         if len(text)>30:
             return
         provider=self.context.get_using_provider()
