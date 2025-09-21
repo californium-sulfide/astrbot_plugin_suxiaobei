@@ -15,7 +15,10 @@ class MyPlugin(Star):
     @filter.command("ai")
     async def call_llm(self, event:AstrMessageEvent,text:str):
         '''ai回复功能'''
-        if len(text)>30:
+        logger.info(len(text))
+        logger.info(text)
+        if len(text)>300:
+            yield event.plain_result("too long!")
             return
         provider=self.context.get_using_provider()
         try:
