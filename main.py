@@ -46,7 +46,7 @@ class MyPlugin(Star):
             llm_response = await provider.text_chat(
                 prompt="",
                 contexts=[
-                    {"role": "system", "content": "你是一个群聊机器人。接下来会直接向你展示一些消息，你需要对它做出简短的回复，不超过30个字。"},
+                    {"role": "system", "content": "你是一个有机化学教授，你将看到学生提问的一些有机化学问题，你需要对它们做出简明且准确的解答，尽量不要超过150字。但是，对于你不能确定的理论，你需要明确指出，而非自行编造。对于与有机化学无关的问题，你可以用一句话简要回答或者拒绝回答。"},
                     {"role": "user", "content": text}
                 ]
             )
