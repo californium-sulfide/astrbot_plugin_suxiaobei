@@ -1,8 +1,9 @@
-from AstrBot.astrbot.core.message.components import BaseMessageComponent,ComponentType
+from astrbot.core.message.components import BaseMessageComponent,ComponentType,Plain
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 import astrbot.api.message_components as Comp
 from astrbot.api import logger
+import re
 
 @register("helloworld", "YourName", "一个简单的 Hello World 插件", "1.0.0")
 class MyPlugin(Star):
@@ -33,5 +34,15 @@ class MyPlugin(Star):
             yield event.plain_result(out_text)
         except Exception as e:
             logger.error(f"LLM调用失败: {e}")
+    @filter.regex("卡布达")
+    async def beng_kabuda(self,event:AstrMessageEvent):
+        """将对话中所有“卡布达”替换为发送者名字，并在末尾加上“~卡布”"""
+        segs=event.get_messages()
+        for raw in segs:
+            if isinstance(raw,Plain):
+                while(re.match('卡布达',raw.text)):
+                    raw.text=re.sub('卡布达',event.get_sender_name(),raw.text)
+        segs.append(Plain('~卡布'))
+        yield event.chain_result(segs)
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
