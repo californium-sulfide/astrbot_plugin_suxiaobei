@@ -1,0 +1,26 @@
+{
+  "llm": {
+    "description": "开启ai指令",
+    "type": "bool"
+  },
+  "kabuda": {
+    "description": "开启卡布达匹配",
+    "type": "bool"
+  },
+  "name": {
+    "description": "开启人名匹配",
+    "type": "bool"
+  },
+  "name_probability":{
+    "description": "人名触发概率",
+    "type": "float"
+  },
+  "name_list":{
+    "description": "人名列表",
+    "type": "list"
+  },
+  "order_jie":{
+    "description": "开启点杰指令",
+    "type": "bool"
+  }
+}

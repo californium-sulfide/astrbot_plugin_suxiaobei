@@ -69,12 +69,12 @@ class MyPlugin(Star):
         for index in range(0,len(default_course_name)):
             if random.random()<0.1:
                 text+='，不加'+default_course_name[index]
-                price+=default_course_price[index]
+                price-=default_course_price[index]
             else:
                 num=1
                 while random.random()<0.2:
                     num+=1
-                    price+=sausage_price[index]
+                    price+=default_course_price[index]
                 if num==1:
                     pass
                 elif num==2:
