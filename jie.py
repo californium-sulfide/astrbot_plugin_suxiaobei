@@ -1,11 +1,16 @@
 import random
+from .dataIO import save, load
+path='./data/order_jie'
 main_course_name=['炒饼','炒面','炒河粉','炒饭','炒米线','炒方便面']
 main_course_price=[12,12,12,12,12,12]
 main_course_weight=[100.0,50.0,10.0,100.0,10.0,10.0]
-default_course_name=['蔬菜']
-default_course_price=[2]
+bind_course_name=['蔬菜']
+bind_course_price=[2]
+
 sausage_name=['王中王','藤椒肠','大肉肠','鸡肉肠']
 sausage_price=[2,3,4,2]
+sausage_probability=[0.5,0.2,0.1,0.3]
+
 addition_name=['鸡蛋','鸡肉','猪肉','鱼豆腐','大海带丝',
                 '梅菜笋丝','爽口萝卜','爽口黄瓜','金针菇','红油豆角','爽口菜','雪里红','小海带丝','竹笋',
                 '小卫龙','小土豆丝','小开胃丝','小葱排骨粒',
@@ -27,25 +32,21 @@ def random_jie():
     while r>main_course_weight[index]:
         r-=main_course_weight[index]
         index+=1
-    text+=main_course_name[index]
+    main_course_list=[index]
     price+=main_course_price[index]
-    for index in range(0,len(default_course_name)):
+    bind_course_list=[]
+    for index in range(0,len(bind_course_name)):
         if random.random()<0.1:
-            text+='，不加'+default_course_name[index]
-            price-=default_course_price[index]
+            text+='，不加'+bind_course_name[index]
+            price-=bind_course_price[index]
         else:
             num=1
             while random.random()<0.2:
                 num+=1
-                price+=default_course_price[index]
-            if num==1:
-                pass
-            elif num==2:
-                text+='，加'+default_course_name[index]
-            else:
-                text+='，加'+str(zh_num[num-1])+'份'+default_course_name[index]
+                price+=bind_course_price[index]
+            bind_course_list.append(num)
     sausage_list=[0,]
-    remove_default=False
+    remove_bind=False
     while random.random()<0.3:
         index=random.randint(0,len(sausage_name)-1)
         sausage_list.append(index)
@@ -54,14 +55,14 @@ def random_jie():
         sausage_list.remove(0)
         price-=2
     if sausage_list.count(0)==0:
-        remove_default=True
+        remove_bind=True
     if len(sausage_list)==0:
         text+='，不加肠'
     elif len(sausage_list)==1:
-        if remove_default:
+        if remove_bind:
             text+='，换'+sausage_name[sausage_list[0]]
     else:
-        if remove_default:
+        if remove_bind:
             text+='，换'
         else:
             text+='，加'
@@ -103,5 +104,27 @@ def random_jie():
             text+='，加'+str(zh_num[num])+'份'+addition_name[index]
     text+='。一共'+str(price)+'元。'
     return text
+    return {'jie_list':[main_course_list,sausage_list],'price':price}
+def dump_jie(jie_list:list[list[int]],price:int):
+    text='点一份'
+    [main_course_list,bind_course_list,sausage_list,addition_list]=jie_list
+    main_course=main_course_list[0]
+    text+=main_course_name[main_course]
+    for index in range(0,len(bind_course_name)):
+        if bind_course_list[index]==0:
+            text+='，不加'+bind_course_name[index]
+        elif bind_course_list[index]==1:
+            pass
+        elif bind_course_list[index]==2:
+            text+='，加'+bind_course_name[index]
+        else:
+            text+='，加'+str(zh_num[bind_course_list[index]-1])+'份'+bind_course_name[index]
+    remove_bind=True if sausage_list.count(0)==0 else False
+
+    return text
+    pass
+def dump_random_jie():
+    pass
+    #return dump_jie(**random_jie())
 def parse_jie(text:str):
     return
